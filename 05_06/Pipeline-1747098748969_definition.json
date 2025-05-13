@@ -1,0 +1,173 @@
+{
+    "Version": "2020-12-01",
+    "Metadata": {
+        "PipelineArn": "arn:aws:sagemaker:us-east-1:241215432415:pipeline/Pipeline-1747098748969",
+        "RoleArn": "arn:aws:iam::241215432415:role/service-role/AmazonSageMaker-ExecutionRole-20200921T173398",
+        "CreatedBy": "ndc-1680143035114",
+        "LastModifiedBy": "ndc-1680143035114",
+        "CreationTime": "2025-05-13T01:15:20.000Z",
+        "LastModifiedTime": "2025-05-13T15:43:22.000Z",
+        "Tags": "sagemaker:user-profile-arn: arn:aws:sagemaker:us-east-1:241215432415:user-profile/d-hbp1zaq3gds4/ndc-1680143035114, sagemaker:domain-arn: arn:aws:sagemaker:us-east-1:241215432415:domain/d-hbp1zaq3gds4"
+    },
+    "Parameters": [],
+    "Steps": [
+        {
+            "Name": "FineTune_EE6015",
+            "Type": "Training",
+            "DisplayName": "Fine tune Llama 2",
+            "VirtualStepType": "FineTune",
+            "Arguments": {
+                "TrainingJobName": "jumpstart-dft-meta-textgeneration-l-20250513-153231",
+                "AlgorithmSpecification": {
+                    "TrainingImage": "763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-training:2.0.0-transformers4.28.1-gpu-py310-cu118-ubuntu20.04",
+                    "TrainingInputMode": "File",
+                    "MetricDefinitions": [
+                        {
+                            "Name": "huggingface-textgeneration:eval-loss",
+                            "Regex": "eval_epoch_loss=tensor\\(([0-9\\.]+)"
+                        },
+                        {
+                            "Name": "huggingface-textgeneration:eval-ppl",
+                            "Regex": "eval_ppl=tensor\\(([0-9\\.]+)"
+                        },
+                        {
+                            "Name": "huggingface-textgeneration:train-loss",
+                            "Regex": "train_epoch_loss=([0-9\\.]+)"
+                        }
+                    ]
+                },
+                "InputDataConfig": [
+                    {
+                        "ChannelName": "training",
+                        "DataSource": {
+                            "S3DataSource": {
+                                "S3DataType": "S3Prefix",
+                                "S3Uri": "s3://sagemaker-us-east-1-241215432415/pipeline/formatted_amzn_train_data.txt",
+                                "S3DataDistributionType": "FullyReplicated"
+                            }
+                        }
+                    },
+                    {
+                        "ChannelName": "code",
+                        "DataSource": {
+                            "S3DataSource": {
+                                "S3DataType": "S3Prefix",
+                                "S3Uri": "s3://jumpstart-cache-prod-us-east-1/source-directory-tarballs/training/meta-textgeneration/prepack/inference-meta-textgeneration/v1.2.0/sourcedir.tar.gz",
+                                "S3DataDistributionType": "FullyReplicated"
+                            }
+                        }
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "sagemaker-studio:jumpstart-model-id",
+                        "Value": "meta-textgeneration-llama-2-7b"
+                    },
+                    {
+                        "Key": "sagemaker-studio:jumpstart-model-version",
+                        "Value": "4.15.0"
+                    },
+                    {
+                        "Key": "sagemaker-studio:jumpstart-hub-name",
+                        "Value": "SageMakerPublicHub"
+                    },
+                    {
+                        "Key": "sagemaker-studio:hub-content-arn",
+                        "Value": "arn:aws:sagemaker:us-east-1:aws:hub-content/SageMakerPublicHub/Model/meta-textgeneration-llama-2-7b/4.15.0"
+                    },
+                    {
+                        "Key": "sagemaker-studio:jumpstart-monitor",
+                        "Value": "true"
+                    },
+                    {
+                        "Key": "sagemaker-studio:jumpstart-model-name",
+                        "Value": "Meta Llama 2 7B"
+                    }
+                ],
+                "EnableNetworkIsolation": true,
+                "RoleArn": "arn:aws:iam::241215432415:role/service-role/AmazonSageMaker-ExecutionRole-20200921T173398",
+                "OutputDataConfig": {
+                    "S3OutputPath": "s3://sagemaker-us-east-1-241215432415"
+                },
+                "HyperParameters": {
+                    "sagemaker_program": "\"transfer_learning.py\"",
+                    "sagemaker_container_log_level": "20",
+                    "sagemaker_job_name": "\"jumpstart-dft-meta-textgeneration-l-20250513-011318\"",
+                    "sagemaker_region": "\"us-east-1\"",
+                    "sagemaker_submit_directory": "\"/opt/ml/input/data/code/sourcedir.tar.gz\"",
+                    "int8_quantization": "\"False\"",
+                    "enable_fsdp": "\"True\"",
+                    "epoch": "\"1\"",
+                    "learning_rate": "\"0.0001\"",
+                    "lora_r": "\"8\"",
+                    "lora_alpha": "\"32\"",
+                    "target_modules": "\"q_proj,v_proj\"",
+                    "lora_dropout": "\"0.05\"",
+                    "instruction_tuned": "\"False\"",
+                    "chat_dataset": "\"False\"",
+                    "add_input_output_demarcation_key": "\"True\"",
+                    "per_device_train_batch_size": "\"4\"",
+                    "per_device_eval_batch_size": "\"1\"",
+                    "max_train_samples": "\"-1\"",
+                    "max_val_samples": "\"-1\"",
+                    "seed": "\"10\"",
+                    "max_input_length": "\"-1\"",
+                    "validation_split_ratio": "\"0.2\"",
+                    "train_data_split_seed": "\"0\"",
+                    "preprocessing_num_workers": "\"None\""
+                },
+                "StoppingCondition": {
+                    "MaxRuntimeInSeconds": 360000
+                },
+                "ResourceConfig": {
+                    "VolumeSizeInGB": 256,
+                    "InstanceType": "ml.g5.12xlarge",
+                    "InstanceCount": 1
+                },
+                "Environment": {
+                    "SageMakerGatedModelS3Uri": "s3://jumpstart-private-cache-prod-us-east-1/meta-training/g5/v1.0.0/train-meta-textgeneration-llama-2-7b.tar.gz",
+                    "accept_eula": "true"
+                },
+                "EnableInterContainerTrafficEncryption": true
+            }
+        },
+        {
+            "Name": "RegisterModel_3539BE",
+            "Type": "RegisterModel",
+            "DisplayName": "Register fine tuned model",
+            "DependsOn": [
+                "FineTune_EE6015"
+            ],
+            "Arguments": {
+                "InferenceSpecification": {
+                    "Containers": [
+                        {
+                            "ModelDataUrl": {
+                                "Get": "Steps.FineTune_EE6015.ModelArtifacts.S3ModelArtifacts"
+                            },
+                            "Image": "763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-training:2.0.0-transformers4.28.1-gpu-py310-cu118-ubuntu20.04"
+                        }
+                    ]
+                },
+                "ModelPackageGroupName": "LLAMA2-FINE-TUNE"
+            }
+        },
+        {
+            "Name": "Model_BE3FCA",
+            "Type": "Model",
+            "DisplayName": "Create model",
+            "Arguments": {
+                "ExecutionRoleArn": "arn:aws:iam::241215432415:role/service-role/AmazonSageMaker-ExecutionRole-20200921T173398",
+                "PrimaryContainer": {
+                    "ModelDataUrl": {
+                        "Get": "Steps.FineTune_EE6015.ModelArtifacts.S3ModelArtifacts"
+                    },
+                    "Image": "763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-training:2.0.0-transformers4.28.1-gpu-py310-cu118-ubuntu20.04"
+                }
+            },
+            "DependsOn": [
+                "FineTune_EE6015"
+            ]
+        }
+    ]
+}
